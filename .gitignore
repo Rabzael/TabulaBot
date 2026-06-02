@@ -1,6 +1,7 @@
 # Files
 .env
 .env.*
+!examples/.env.example
 config/.env*
 *.pyc
 

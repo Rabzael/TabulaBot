@@ -1,8 +1,15 @@
+![CI](https://github.com/Rabzael/TabulaBot/actions/workflows/ci.yml/badge.svg) ![Python 3.12](https://img.shields.io/badge/python-3.12-blue) 
+
 # TabulaBot
 
 Script Python per comporre e inviare su Telegram messaggi calendarizzati, a partire da un calendario JSONL e, opzionalmente, da una configurazione YAML per header e footer.
 
 Python script to compose and send scheduled Telegram messages, using a JSONL calendar and, optionally, a YAML configuration file for header and footer.
+
+
+🇮🇹 [Italiano](#italiano) | 🇬🇧 [English](#english)
+
+---
 
 ## Italiano
 
