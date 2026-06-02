@@ -2,7 +2,8 @@ import json
 import subprocess
 import sys
 
-from tabula import assembly_message, get_dates_line, get_first_line_to_send, update_calendar
+from src.message import assembly_message, get_dates_line
+from src.calendar import get_first_line_to_send, update_calendar
 
 
 def test_get_dates_line_same_month():
