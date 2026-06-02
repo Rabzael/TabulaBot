@@ -1,0 +1,15 @@
+# Files
+.env
+.env.*
+config/.env*
+*.pyc
+
+# Folders
+__pycache__/
+.pytest_cache/
+.venv/
+.codex
+.agents
+bidone/
+config/
+data/
