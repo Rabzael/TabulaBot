@@ -2,9 +2,9 @@
 
 # TabulaBot
 
-Script Python per comporre e inviare su Telegram messaggi calendarizzati, a partire da un calendario JSONL e, opzionalmente, da una configurazione YAML per header e footer.
+Script Python per comporre e inviare su Telegram messaggi calendarizzati, a partire da un calendario JSONL e, opzionalmente, da una configurazione YAML per header e footer. Include anche una piccola UI Streamlit per modificare i file JSONL prima dell'invio schedulato.
 
-Python script to compose and send scheduled Telegram messages, using a JSONL calendar and, optionally, a YAML configuration file for header and footer.
+Python script to compose and send scheduled Telegram messages, using a JSONL calendar and, optionally, a YAML configuration file for header and footer. It also includes a small Streamlit UI to edit JSONL files before scheduled sending.
 
 
 🇮🇹 [Italiano](#italiano) | 🇬🇧 [English](#english)
@@ -20,8 +20,11 @@ Python script to compose and send scheduled Telegram messages, using a JSONL cal
 - Configurazione YAML opzionale separata dai dati del calendario.
 - Gestione dei secret tramite variabili d'ambiente.
 - Integrazione con Telegram Bot API.
+- UI Streamlit per modificare i calendari JSONL.
 - Modalita `--dry-run` per validare il messaggio senza effetti collaterali.
 - Tracciamento dello stato di invio tramite `inviato` e `message_id`.
+- Blocco dell'invio se il messaggio contiene marker di verifica.
+- Schedulazione tramite GitHub Actions.
 
 ### Uso dell'AI
 
@@ -45,11 +48,14 @@ Canale o chat Telegram
 
 `tabula.py` legge il primo elemento del calendario con `inviato: false`, genera il messaggio, chiede conferma e lo invia tramite Telegram. Se viene passato `--more`, aggiunge header e footer dal file YAML. Dopo l'invio aggiorna la riga del calendario impostando `inviato: true` e salvando il `message_id` restituito da Telegram.
 
+`ui.py` e separato dal flusso di invio: serve solo a scegliere e modificare un file JSONL. Lo script `tabula.py` resta il punto di ingresso per invio manuale o schedulato.
+
 ### Requisiti
 
 - Python 3
 - Un bot Telegram
 - Un `chat_id` Telegram valido
+- Un `chat_id` personale opzionale per ricevere avvisi quando un invio viene bloccato
 
 Installa le dipendenze:
 
@@ -64,6 +70,32 @@ La cartella `examples` contiene modelli pronti da copiare o adattare:
 - `examples/calendario.jsonl`: calendario in formato JSONL
 - `examples/tabula.yaml`: configurazione opzionale di header e footer
 - `examples/.env.example`: variabili d'ambiente richieste
+
+### UI per modificare il calendario
+
+Avvia la UI con:
+
+```bash
+streamlit run ui.py
+```
+
+All'avvio compare solo il selettore del file calendario. La UI cerca file `.jsonl` nelle cartelle `data/` ed `examples/`. Dopo la selezione mostra l'elenco dei periodi e l'editor del testo.
+
+Nell'editor, una riga vuota separa i blocchi di messaggio. I blocchi vuoti vengono scartati al salvataggio:
+
+```text
+Messaggio 1
+
+Messaggio 2
+```
+
+viene salvato come:
+
+```json
+"messaggi": ["Messaggio 1", "Messaggio 2"]
+```
+
+La UI non invia messaggi Telegram e non richiede token.
 
 ### Configurazione YAML opzionale
 
@@ -96,6 +128,8 @@ Campi:
 - `messaggi`: elenco dei blocchi di testo da inserire nel messaggio
 - `message_id`: identificativo Telegram del messaggio inviato, aggiunto o aggiornato dallo script
 
+Se un blocco in `messaggi` contiene il marker `???`, l'invio viene bloccato. In questo caso il messaggio non viene pubblicato sul canale Telegram.
+
 ### Variabili d'ambiente
 
 Lo script richiede:
@@ -103,7 +137,10 @@ Lo script richiede:
 ```env
 TELEGRAM_BOT_TOKEN=1234567890:AAExampleTokenDaSostituire
 TELEGRAM_CHAT_ID=-1001234567890
+TELEGRAM_ALERT_CHAT_ID=123456789
 ```
+
+`TELEGRAM_ALERT_CHAT_ID` e opzionale ma consigliato per l'esecuzione schedulata: se un invio viene bloccato dalla validazione, il bot invia un messaggio di avviso a quella chat privata. Per ricevere messaggi privati dal bot, devi prima aprire Telegram e scrivere al bot almeno una volta.
 
 Puoi caricarle da file con l'opzione `-e`:
 
@@ -131,13 +168,27 @@ python3 tabula.py -f -e config/.env.dev --more config/tabula.yaml data/2026.json
 
 Non pubblicare token reali o file `.env` privati nel repository.
 
+### Invio schedulato con GitHub Actions
+
+Il workflow `.github/workflows/send.yml` esegue l'invio ogni venerdi mattina:
+
+- `06:00 UTC`, cioe `08:00` in Italia durante l'ora legale e `07:00` in inverno
+- usa `config/tabula.yaml` e `data/2026.jsonl`
+- dopo un invio riuscito committa il calendario aggiornato con `inviato: true` e `message_id`
+
+Configura questi secret in GitHub, in `Settings > Secrets and variables > Actions`:
+
+```text
+TELEGRAM_BOT_TOKEN
+TELEGRAM_CHAT_ID
+TELEGRAM_ALERT_CHAT_ID
+```
+
 ### Roadmap / TODO
 
-- Test unitari con `pytest` per formattazione date, composizione messaggi, selezione della prima riga non inviata, dry-run e aggiornamento calendario.
 - Validazione esplicita dei file JSONL/YAML con messaggi di errore chiari.
 - Scrittura atomica del calendario per ridurre il rischio di corruzione del file durante l'aggiornamento.
-- Exit code coerenti: `0` per successo, `1` per errore.
-- Schedulazione tramite GitHub Actions.
+- Miglioramento dell'escaping MarkdownV2 per Telegram.
 - Link dinamico alla configurazione YAML, per poter richiamare oggetti definiti nel file YAML all'interno del file JSONL.
 
 ## English
@@ -149,8 +200,11 @@ Non pubblicare token reali o file `.env` privati nel repository.
 - Optional YAML configuration separated from calendar data.
 - Secret management through environment variables.
 - Telegram Bot API integration.
+- Streamlit UI to edit JSONL calendars.
 - `--dry-run` mode to validate messages without side effects.
 - Delivery state tracking through `inviato` and `message_id`.
+- Sending is blocked when the message contains review markers.
+- Scheduled execution through GitHub Actions.
 
 ### AI Usage
 
@@ -174,11 +228,14 @@ Telegram channel or chat
 
 `tabula.py` reads the first calendar entry with `inviato: false`, builds the Telegram message, asks for confirmation, and sends it through the Telegram Bot API. When `--more` is provided, it adds header and footer from the YAML file. After a successful send, it updates the calendar line by setting `inviato: true` and storing the Telegram `message_id`.
 
+`ui.py` is separate from the sending flow: it only selects and edits a JSONL file. `tabula.py` remains the entry point for manual or scheduled sending.
+
 ### Requirements
 
 - Python 3
 - A Telegram bot
 - A valid Telegram `chat_id`
+- An optional personal `chat_id` to receive alerts when a send is blocked
 
 Install dependencies:
 
@@ -193,6 +250,32 @@ The `examples` directory contains templates that can be copied or adapted:
 - `examples/calendario.jsonl`: JSONL calendar
 - `examples/tabula.yaml`: optional header and footer configuration
 - `examples/.env.example`: required environment variables
+
+### Calendar Editing UI
+
+Start the UI with:
+
+```bash
+streamlit run ui.py
+```
+
+At startup, only the calendar file selector is shown. The UI looks for `.jsonl` files in `data/` and `examples/`. After selecting a file, it shows the period list and text editor.
+
+In the editor, an empty line separates message blocks. Empty blocks are discarded when saving:
+
+```text
+Message 1
+
+Message 2
+```
+
+is saved as:
+
+```json
+"messaggi": ["Message 1", "Message 2"]
+```
+
+The UI does not send Telegram messages and does not require tokens.
 
 ### Optional YAML Configuration
 
@@ -225,6 +308,8 @@ Fields:
 - `messaggi`: list of text blocks to include in the message
 - `message_id`: Telegram message identifier, added or updated by the script
 
+If a block in `messaggi` contains the `???` marker, sending is blocked. In that case, the message is not published to the Telegram channel.
+
 ### Environment Variables
 
 The script requires:
@@ -232,7 +317,10 @@ The script requires:
 ```env
 TELEGRAM_BOT_TOKEN=1234567890:AAExampleTokenToReplace
 TELEGRAM_CHAT_ID=-1001234567890
+TELEGRAM_ALERT_CHAT_ID=123456789
 ```
+
+`TELEGRAM_ALERT_CHAT_ID` is optional but recommended for scheduled runs: if a send is blocked by validation, the bot sends an alert message to that private chat. To receive private messages from the bot, you must first open Telegram and send the bot at least one message.
 
 Load them from a file with `-e`:
 
@@ -260,8 +348,24 @@ python3 tabula.py -f -e config/.env.dev --more config/tabula.yaml data/2026.json
 
 Do not publish real tokens or private `.env` files in the repository.
 
+### Scheduled Sending With GitHub Actions
+
+The `.github/workflows/send.yml` workflow runs the sender every Friday morning:
+
+- `06:00 UTC`, which is `08:00` in Italy during daylight saving time and `07:00` in winter
+- uses `config/tabula.yaml` and `data/2026.jsonl`
+- after a successful send, commits the updated calendar with `inviato: true` and `message_id`
+
+Configure these secrets in GitHub, under `Settings > Secrets and variables > Actions`:
+
+```text
+TELEGRAM_BOT_TOKEN
+TELEGRAM_CHAT_ID
+TELEGRAM_ALERT_CHAT_ID
+```
+
 ### Roadmap / TODO
 
 - Explicit JSONL/YAML validation with clear error messages.
 - Atomic calendar writes to reduce the risk of corrupting the file during updates.
-- Schedule execution with GitHub Actions.
+- Improved MarkdownV2 escaping for Telegram.
