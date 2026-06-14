@@ -1,4 +1,4 @@
-![CI](https://github.com/Rabzael/TabulaBot/actions/workflows/ci.yml/badge.svg) ![Python 3.12](https://img.shields.io/badge/python-3.12-blue) 
+![CI](https://github.com/Rabzael/TabulaBot/actions/workflows/ci.yml/badge.svg) ![Python 3.12](https://img.shields.io/badge/python-3.12-blue) ![Send scheduled message](https://github.com/Rabzael/TabulaBot/actions/workflows/send.yml/badge.svg)
 
 # TabulaBot
 
