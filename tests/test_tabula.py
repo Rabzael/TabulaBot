@@ -2,7 +2,7 @@ import json
 import subprocess
 import sys
 
-from src.message import assembly_message, get_dates_line
+from src.message import assembly_message, get_dates_line, validate_messages
 from src.calendar import get_first_line_to_send, load_json_calendar, update_calendar
 
 
@@ -43,6 +43,24 @@ def test_assembly_message_without_header_and_footer():
         "*Lunedi*\n"
         "9:30 - Stand-up\n\n"
     )
+
+
+def test_validate_messages_returns_messages_with_blocked_markers():
+    messages = [
+        "*Lunedi*\n9:30 - Stand-up",
+        "*Venerdi*\n??? - Orario da verificare",
+    ]
+
+    assert validate_messages(messages) == ["*Venerdi*\n??? - Orario da verificare"]
+
+
+def test_validate_messages_returns_empty_list_for_valid_messages():
+    messages = [
+        "*Lunedi*\n9:30 - Stand-up",
+        "*Venerdi*\n17:30 - Report",
+    ]
+
+    assert validate_messages(messages) == []
 
 
 def test_get_first_line_to_send_returns_first_pending_entry(tmp_path):

@@ -3,7 +3,7 @@ import os
 from src.cli import define_arguments
 from src.calendar import load_json_calendar, get_first_line_to_send, update_calendar
 from src.telegram import telegram_bot_send
-from src.message import assembly_message, get_dates_line
+from src.message import validate_messages, assembly_message, get_dates_line
 
 from dotenv import load_dotenv
 
@@ -62,6 +62,19 @@ def main() -> int:
             return 0
 
     # Send message via Telegram
+    invalid_messages = validate_messages(calendar[to_send]['messaggi'])
+    if invalid_messages:
+        alert_chat_id = os.environ.get("TELEGRAM_ALERT_CHAT_ID")
+        alert_message = (
+            "Invio BLOCCATO.\n\n"
+            "Il messaggio contiene contenuti da verificare:\n"
+            + "\n".join(f"- {error}" for error in invalid_messages)
+        )
+        if alert_chat_id and not args.dry_run:
+            telegram_bot_send(BOT_TOKEN, alert_chat_id, alert_message)
+        print(alert_message)
+        return 1
+
     response = telegram_bot_send(
         BOT_TOKEN,
         CHAT_ID,

@@ -13,6 +13,17 @@ MONTHS = {
   12 : "Dicembre",
 }
 
+BLOCKED_MARKERS = ['???']
+
+def validate_messages(messaggi:list[str]) -> list[str]:
+  invalid_messages = []
+  for msg in messaggi:
+    for marker in BLOCKED_MARKERS:
+      if marker in msg:
+        invalid_messages.append(msg)
+        continue
+  return invalid_messages
+
 def get_dates_line(start_date_str:str, end_date_str:str) -> str :
   start_date = list(map(int, start_date_str.split('-')))
   end_date = list(map(int, end_date_str.split('-')))
