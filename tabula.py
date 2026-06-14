@@ -1,7 +1,7 @@
 import yaml
 import os
 from src.cli import define_arguments
-from src.calendar import get_first_line_to_send, update_calendar
+from src.calendar import load_json_calendar, get_first_line_to_send, update_calendar
 from src.telegram import telegram_bot_send
 from src.message import assembly_message, get_dates_line
 
@@ -31,18 +31,21 @@ def main() -> int:
         with open(args.more, 'r', encoding='utf-8') as f:
             config = yaml.safe_load(f)
 
+    # Load calendar
+    calendar = load_json_calendar(args.calendar_file)
+
     # Get first non-sent line of calendar
-    to_send = get_first_line_to_send(args.calendar_file)
-    if not to_send:
+    to_send = get_first_line_to_send(calendar)
+    if to_send is None:
         print("Nessun messaggio da inviare.")
         return 0
 
     # Build message
     message = assembly_message(
         header = config['message']['header'] if config else None,
-        dates_line = get_dates_line(to_send['json']['valido-da'], to_send['json']['valido-a']),
+        dates_line = get_dates_line(calendar[to_send]['valido-da'], calendar[to_send]['valido-a']),
         footer = config['message']['footer'] if config else None,
-        days = to_send['json']['messaggi']
+        days = calendar[to_send]['messaggi']
     )
 
     # If needed, preview message and ask user confirmation
@@ -68,11 +71,14 @@ def main() -> int:
         print("ERRORE: impossibile inviare il messaggio")
         print(f"{response.status_code}:  {response.text}")
         return 1
-    # print(f"MESSAGGIO INVIATO:\n{response.text}")
-    print("MESSAGGIO INVIATO")
+    else:
+        # print(f"MESSAGGIO INVIATO:\n{response.text}")
+        calendar[to_send]['message_id'] = response.json()['result']['message_id']
+        print("MESSAGGIO INVIATO")
 
     # Set message as sent
-    if not update_calendar(args.calendar_file, to_send, response.json()['result']['message_id']):
+    calendar[to_send]['inviato'] = True
+    if not update_calendar(args.calendar_file, calendar):
         print("ERRORE: impossibile aggiornare il calendario")
         return 1
     

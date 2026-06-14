@@ -3,7 +3,7 @@ import subprocess
 import sys
 
 from src.message import assembly_message, get_dates_line
-from src.calendar import get_first_line_to_send, update_calendar
+from src.calendar import get_first_line_to_send, load_json_calendar, update_calendar
 
 
 def test_get_dates_line_same_month():
@@ -64,13 +64,14 @@ def test_get_first_line_to_send_returns_first_pending_entry(tmp_path):
         encoding="utf-8",
     )
 
-    to_send = get_first_line_to_send(str(calendar_file))
+    calendar = load_json_calendar(str(calendar_file))
+    to_send = get_first_line_to_send(calendar)
 
-    assert to_send["json"] == pending_entry
-    assert to_send["string"] == json.dumps(pending_entry)
+    assert to_send == 1
+    assert calendar[to_send] == pending_entry
 
 
-def test_update_calendar_marks_entry_as_sent(tmp_path):
+def test_update_calendar_saves_updated_entries(tmp_path):
     calendar_file = tmp_path / "calendar.jsonl"
     pending_entry = {
         "inviato": False,
@@ -79,17 +80,31 @@ def test_update_calendar_marks_entry_as_sent(tmp_path):
         "messaggi": ["da inviare"],
     }
     calendar_file.write_text(json.dumps(pending_entry) + "\n", encoding="utf-8")
-    to_send = get_first_line_to_send(str(calendar_file))
+    calendar = load_json_calendar(str(calendar_file))
+    to_send = get_first_line_to_send(calendar)
+    calendar[to_send]["inviato"] = True
+    calendar[to_send]["message_id"] = "123"
 
     assert update_calendar(
         str(calendar_file),
-        to_send,
-        "123",
+        calendar,
     )
 
     updated_entry = json.loads(calendar_file.read_text(encoding="utf-8"))
     assert updated_entry["inviato"] is True
     assert updated_entry["message_id"] == "123"
+
+
+def test_get_first_line_to_send_treats_missing_sent_flag_as_pending():
+    calendar = [
+        {
+            "valido-da": "2026-06-07",
+            "valido-a": "2026-06-13",
+            "messaggi": ["da inviare"],
+        }
+    ]
+
+    assert get_first_line_to_send(calendar) == 0
 
 
 def test_dry_run_without_more_does_not_require_config_file():
