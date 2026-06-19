@@ -14,6 +14,21 @@ MONTHS = {
 }
 
 BLOCKED_MARKERS = ['???']
+INVALID_CHARS = {
+  '(': '\\(',
+  ')': '\\)',
+  '>': '\\>',
+  '!': '\\!',
+  '=': '\\='
+}
+
+def sanitize_messages(messaggi:list[str]) -> list[str]:
+  result = []
+  for msg in messaggi:
+    for inv_char, new_char in INVALID_CHARS.items():
+      msg = msg.replace(inv_char, new_char)
+    result.append(msg)
+  return result
 
 def validate_messages(messaggi:list[str]) -> list[str]:
   invalid_messages = []
@@ -35,9 +50,10 @@ def get_dates_line(start_date_str:str, end_date_str:str) -> str :
 
 def assembly_message(header:str|None, dates_line:str|None, footer:str|None, days: list) -> str :
   message = ""
+  parts = []
   if header: message = f"{header}\n"
-  if dates_line: message = f"{message}{dates_line}\n\n"
-  for entry in days:
-    message = f"{message}{entry}\n\n"
-  if footer: message = f"{message}{footer}"
+  if dates_line: parts.append(dates_line)
+  if days: parts.extend(sanitize_messages(days))
+  if footer: parts.append(footer)
+  if parts: message += "\n\n".join(parts)
   return message
