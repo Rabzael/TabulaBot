@@ -41,7 +41,7 @@ def test_assembly_message_without_header_and_footer():
     assert message == (
         "_Dal 7 al 13 Giugno_\n\n"
         "*Lunedi*\n"
-        "9:30 - Stand-up\n\n"
+        "9:30 - Stand-up"
     )
 
 
