@@ -2,9 +2,9 @@ name: Send scheduled message
 
 on:
   schedule:
-    # Every Friday at 06:00 UTC.
+    # Every Thursday at 06:00 UTC.
     # This is 08:00 in Italy during daylight saving time and 07:00 in winter.
-    - cron: "0 6 * * 5"
+    - cron: "0 6 * * 4"
   workflow_dispatch:
 
 permissions:
