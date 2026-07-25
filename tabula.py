@@ -45,7 +45,8 @@ def main() -> int:
         header = config['message']['header'] if config else None,
         dates_line = get_dates_line(calendar[to_send]['valido-da'], calendar[to_send]['valido-a']),
         footer = config['message']['footer'] if config else None,
-        days = calendar[to_send]['messaggi']
+        days = calendar[to_send]['messaggi'],
+        fsspx = calendar[to_send].get('fsspx')
     )
 
     # If needed, preview message and ask user confirmation
@@ -62,7 +63,7 @@ def main() -> int:
             return 0
 
     # Send message via Telegram
-    invalid_messages = validate_messages(calendar[to_send]['messaggi'])
+    invalid_messages = validate_messages(calendar[to_send]['messaggi'] + calendar[to_send].get('fsspx', []))
     if invalid_messages:
         alert_chat_id = os.environ.get("TELEGRAM_ALERT_CHAT_ID")
         alert_message = (

@@ -126,9 +126,10 @@ Campi:
 - `valido-da`: data di inizio validita nel formato `YYYY-MM-DD`
 - `valido-a`: data di fine validita nel formato `YYYY-MM-DD`
 - `messaggi`: elenco dei blocchi di testo da inserire nel messaggio
+- `fsspx`: elenco opzionale di righe (es. messe FSSPX) mostrate in una sezione a parte in fondo al messaggio, prima del footer, precedute dalla riga `Per completezza segnaliamo:`
 - `message_id`: identificativo Telegram del messaggio inviato, aggiunto o aggiornato dallo script
 
-Se un blocco in `messaggi` contiene il marker `???`, l'invio viene bloccato. In questo caso il messaggio non viene pubblicato sul canale Telegram.
+Se un blocco in `messaggi` o in `fsspx` contiene il marker `???`, l'invio viene bloccato. In questo caso il messaggio non viene pubblicato sul canale Telegram.
 
 ### Variabili d'ambiente
 
@@ -306,9 +307,10 @@ Fields:
 - `valido-da`: start date in `YYYY-MM-DD` format
 - `valido-a`: end date in `YYYY-MM-DD` format
 - `messaggi`: list of text blocks to include in the message
+- `fsspx`: optional list of lines (e.g. FSSPX Masses) shown in a separate section at the end of the message, before the footer, preceded by the line `Per completezza segnaliamo:`
 - `message_id`: Telegram message identifier, added or updated by the script
 
-If a block in `messaggi` contains the `???` marker, sending is blocked. In that case, the message is not published to the Telegram channel.
+If a block in `messaggi` or `fsspx` contains the `???` marker, sending is blocked. In that case, the message is not published to the Telegram channel.
 
 ### Environment Variables
 

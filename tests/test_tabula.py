@@ -45,6 +45,43 @@ def test_assembly_message_without_header_and_footer():
     )
 
 
+def test_assembly_message_with_fsspx_section():
+    message = assembly_message(
+        header="*Aggiornamenti*",
+        dates_line="_Dal 7 al 13 Giugno_",
+        footer="---\nContatti: info@example.org",
+        days=["*Domenica*\n9:00 - S. Giovanni in Foro"],
+        fsspx=["18:00 - Cappella di Villa Quaranta, Pescantina (VR)"],
+    )
+
+    assert message == (
+        "*Aggiornamenti*\n"
+        "_Dal 7 al 13 Giugno_\n\n"
+        "*Domenica*\n"
+        "9:00 - S. Giovanni in Foro\n\n"
+        "Per completezza segnaliamo:\n"
+        "18:00 - Cappella di Villa Quaranta, Pescantina \\(VR\\)\n\n"
+        "---\n"
+        "Contatti: info@example.org"
+    )
+
+
+def test_assembly_message_without_fsspx_is_unchanged():
+    message = assembly_message(
+        header=None,
+        dates_line="_Dal 7 al 13 Giugno_",
+        footer=None,
+        days=["*Lunedi*\n9:30 - Stand-up"],
+        fsspx=None,
+    )
+
+    assert message == (
+        "_Dal 7 al 13 Giugno_\n\n"
+        "*Lunedi*\n"
+        "9:30 - Stand-up"
+    )
+
+
 def test_validate_messages_returns_messages_with_blocked_markers():
     messages = [
         "*Lunedi*\n9:30 - Stand-up",
@@ -52,6 +89,12 @@ def test_validate_messages_returns_messages_with_blocked_markers():
     ]
 
     assert validate_messages(messages) == ["*Venerdi*\n??? - Orario da verificare"]
+
+
+def test_validate_messages_returns_blocked_markers_in_fsspx_lines():
+    fsspx_lines = ["18:00 - ???"]
+
+    assert validate_messages(fsspx_lines) == fsspx_lines
 
 
 def test_validate_messages_returns_empty_list_for_valid_messages():

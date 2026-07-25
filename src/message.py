@@ -48,12 +48,13 @@ def get_dates_line(start_date_str:str, end_date_str:str) -> str :
   else:
     return f"_Dal {start_date[2]} {MONTHS[start_date[1]]} al {end_date[2]} {MONTHS[end_date[1]]}_"
 
-def assembly_message(header:str|None, dates_line:str|None, footer:str|None, days: list) -> str :
+def assembly_message(header:str|None, dates_line:str|None, footer:str|None, days: list, fsspx: list|None = None) -> str :
   message = ""
   parts = []
   if header: message = f"{header}\n"
   if dates_line: parts.append(dates_line)
   if days: parts.extend(sanitize_messages(days))
+  if fsspx: parts.append("Per completezza segnaliamo:\n" + "\n".join(sanitize_messages(fsspx)))
   if footer: parts.append(footer)
   if parts: message += "\n\n".join(parts)
   return message
