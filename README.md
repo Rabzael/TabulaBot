@@ -59,11 +59,23 @@ Canale o chat Telegram
 - Un `chat_id` Telegram valido
 - Un `chat_id` personale opzionale per ricevere avvisi quando un invio viene bloccato
 
-Installa le dipendenze:
+### Installazione
+
+Come pacchetto, con il comando `tabula`:
+
+```bash
+pip install .
+tabula --dry-run examples/calendario.jsonl
+```
+
+In alternativa, per sviluppo o per usare anche la UI Streamlit, installa le dipendenze e lancia gli script direttamente dal repository:
 
 ```bash
 pip install -r requirements.txt
+python3 tabula.py --dry-run examples/calendario.jsonl
 ```
+
+Negli esempi che seguono viene usata l'invocazione diretta `python3 tabula.py`; se hai installato il pacchetto, il comando `tabula` è equivalente e puoi ometterne il prefisso `python3` e il nome del file.
 
 ### File di esempio
 
@@ -265,11 +277,23 @@ Telegram channel or chat
 - A valid Telegram `chat_id`
 - An optional personal `chat_id` to receive alerts when a send is blocked
 
-Install dependencies:
+### Installation
+
+As a package, with the `tabula` command:
+
+```bash
+pip install .
+tabula --dry-run examples/calendario.jsonl
+```
+
+Alternatively, for development or to also use the Streamlit UI, install the dependencies and run the scripts directly from the repository:
 
 ```bash
 pip install -r requirements.txt
+python3 tabula.py --dry-run examples/calendario.jsonl
 ```
+
+The examples below use the direct invocation `python3 tabula.py`; if you installed the package, the `tabula` command is equivalent and you can drop the `python3` prefix and the file name.
 
 ### Example Files
 

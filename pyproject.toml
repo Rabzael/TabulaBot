@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tabulabot"
+version = "0.1.0"
+description = "Compone e invia su Telegram messaggi calendarizzati da un calendario JSONL."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "python-dotenv>=1.2",
+    "PyYAML>=6.0",
+    "requests>=2.34",
+]
+
+[project.scripts]
+tabula = "tabula:main"
+
+[tool.setuptools]
+py-modules = ["tabula"]
+packages = ["src"]

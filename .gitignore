@@ -13,3 +13,5 @@ __pycache__/
 .agents
 bidone/
 config/
+build/
+*.egg-info/
