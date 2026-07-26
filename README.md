@@ -447,3 +447,4 @@ TELEGRAM_ALERT_CHAT_ID
 - Explicit JSONL/YAML validation with clear error messages.
 - Atomic calendar writes to reduce the risk of corrupting the file during updates.
 - Improved MarkdownV2 escaping for Telegram.
+- Dynamic link to the YAML configuration, to reference objects defined in the YAML file from within the JSONL file.
