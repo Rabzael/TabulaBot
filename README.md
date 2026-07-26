@@ -6,6 +6,8 @@ Script Python per comporre e inviare su Telegram messaggi calendarizzati, a part
 
 Python script to compose and send scheduled Telegram messages, using a JSONL calendar and, optionally, a YAML configuration file for header and footer. It also includes a small Streamlit UI to edit JSONL files before scheduled sending.
 
+**In produzione** dal 2026: invia aggiornamenti settimanali reali su un canale Telegram ogni giovedì mattina tramite GitHub Actions schedulato — non è una demo.
+**In production** since 2026: sends real weekly updates to a Telegram channel every Thursday morning via a scheduled GitHub Actions workflow — not a demo.
 
 🇮🇹 [Italiano](#italiano) | 🇬🇧 [English](#english)
 
@@ -70,6 +72,31 @@ La cartella `examples` contiene modelli pronti da copiare o adattare:
 - `examples/calendario.jsonl`: calendario in formato JSONL
 - `examples/tabula.yaml`: configurazione opzionale di header e footer
 - `examples/.env.example`: variabili d'ambiente richieste
+
+### Esempio di messaggio renderizzato
+
+Partendo da `examples/calendario.jsonl` ed `examples/tabula.yaml`, questo è il messaggio così come appare nella chat Telegram (grassetto e corsivo già interpretati da Telegram, non i marker Markdown grezzi):
+
+> **Aggiornamenti settimanali**
+> _Dal 7 al 13 Giugno_
+>
+> **Lunedi 8/06 - Stand-up team prodotto**
+> 9:30 - Canale operativo
+>
+> **Mercoledi 10/06 - Revisione roadmap**
+> 15:00 - Sala riunioni virtuale
+>
+> **Venerdi 12/06 - Report settimanale**
+> 17:30 - Invio riepilogo stakeholder
+>
+> ---
+> Per contatti: info@example.org
+
+Generato con:
+
+```bash
+python3 tabula.py --dry-run --more examples/tabula.yaml examples/calendario.jsonl
+```
 
 ### UI per modificare il calendario
 
@@ -171,7 +198,7 @@ Non pubblicare token reali o file `.env` privati nel repository.
 
 ### Invio schedulato con GitHub Actions
 
-Il workflow `.github/workflows/send.yml` esegue l'invio ogni venerdi mattina:
+Il workflow `.github/workflows/send.yml` esegue l'invio ogni giovedi mattina:
 
 - `06:00 UTC`, cioe `08:00` in Italia durante l'ora legale e `07:00` in inverno
 - usa `config/tabula.yaml` e `data/2026.jsonl`
@@ -251,6 +278,31 @@ The `examples` directory contains templates that can be copied or adapted:
 - `examples/calendario.jsonl`: JSONL calendar
 - `examples/tabula.yaml`: optional header and footer configuration
 - `examples/.env.example`: required environment variables
+
+### Rendered Message Example
+
+Starting from `examples/calendario.jsonl` and `examples/tabula.yaml`, this is how the message appears in the Telegram chat (bold and italics already interpreted by Telegram, not the raw Markdown markers):
+
+> **Aggiornamenti settimanali**
+> _Dal 7 al 13 Giugno_
+>
+> **Lunedi 8/06 - Stand-up team prodotto**
+> 9:30 - Canale operativo
+>
+> **Mercoledi 10/06 - Revisione roadmap**
+> 15:00 - Sala riunioni virtuale
+>
+> **Venerdi 12/06 - Report settimanale**
+> 17:30 - Invio riepilogo stakeholder
+>
+> ---
+> Per contatti: info@example.org
+
+Generated with:
+
+```bash
+python3 tabula.py --dry-run --more examples/tabula.yaml examples/calendario.jsonl
+```
 
 ### Calendar Editing UI
 
@@ -352,7 +404,7 @@ Do not publish real tokens or private `.env` files in the repository.
 
 ### Scheduled Sending With GitHub Actions
 
-The `.github/workflows/send.yml` workflow runs the sender every Friday morning:
+The `.github/workflows/send.yml` workflow runs the sender every Thursday morning:
 
 - `06:00 UTC`, which is `08:00` in Italy during daylight saving time and `07:00` in winter
 - uses `config/tabula.yaml` and `data/2026.jsonl`
