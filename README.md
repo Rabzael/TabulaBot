@@ -2,9 +2,9 @@
 
 # TabulaBot
 
-Script Python per comporre e inviare su Telegram messaggi calendarizzati, a partire da un calendario JSONL e, opzionalmente, da una configurazione YAML per header e footer. Include anche una piccola UI Streamlit per modificare i file JSONL prima dell'invio schedulato.
+Script Python per comporre e inviare su Telegram messaggi calendarizzati, a partire da un calendario JSONL e, opzionalmente, da una configurazione YAML per header e footer.
 
-Python script to compose and send scheduled Telegram messages, using a JSONL calendar and, optionally, a YAML configuration file for header and footer. It also includes a small Streamlit UI to edit JSONL files before scheduled sending.
+Python script to compose and send scheduled Telegram messages, using a JSONL calendar and, optionally, a YAML configuration file for header and footer.
 
 **In produzione** dal 2026: invia aggiornamenti settimanali reali su un canale Telegram ogni giovedì mattina tramite GitHub Actions schedulato — non è una demo.
 **In production** since 2026: sends real weekly updates to a Telegram channel every Thursday morning via a scheduled GitHub Actions workflow — not a demo.
@@ -22,7 +22,6 @@ Python script to compose and send scheduled Telegram messages, using a JSONL cal
 - Configurazione YAML opzionale separata dai dati del calendario.
 - Gestione dei secret tramite variabili d'ambiente.
 - Integrazione con Telegram Bot API.
-- UI Streamlit per modificare i calendari JSONL.
 - Modalita `--dry-run` per validare il messaggio senza effetti collaterali.
 - Tracciamento dello stato di invio tramite `inviato` e `message_id`.
 - Blocco dell'invio se il messaggio contiene marker di verifica.
@@ -50,8 +49,6 @@ Canale o chat Telegram
 
 `tabula.py` legge il primo elemento del calendario con `inviato: false`, genera il messaggio, chiede conferma e lo invia tramite Telegram. Se viene passato `--more`, aggiunge header e footer dal file YAML. Dopo l'invio aggiorna la riga del calendario impostando `inviato: true` e salvando il `message_id` restituito da Telegram.
 
-`ui.py` e separato dal flusso di invio: serve solo a scegliere e modificare un file JSONL. Lo script `tabula.py` resta il punto di ingresso per invio manuale o schedulato.
-
 ### Requisiti
 
 - Python 3
@@ -68,7 +65,7 @@ pip install .
 tabula --dry-run examples/calendario.jsonl
 ```
 
-In alternativa, per sviluppo o per usare anche la UI Streamlit, installa le dipendenze e lancia gli script direttamente dal repository:
+In alternativa, per sviluppo, installa le dipendenze e lancia gli script direttamente dal repository:
 
 ```bash
 pip install -r requirements.txt
@@ -109,32 +106,6 @@ Generato con:
 ```bash
 python3 tabula.py --dry-run --more examples/tabula.yaml examples/calendario.jsonl
 ```
-
-### UI per modificare il calendario
-
-Avvia la UI con:
-
-```bash
-streamlit run ui.py
-```
-
-All'avvio compare solo il selettore del file calendario. La UI cerca file `.jsonl` nelle cartelle `data/` ed `examples/`. Dopo la selezione mostra l'elenco dei periodi e l'editor del testo.
-
-Nell'editor, una riga vuota separa i blocchi di messaggio. I blocchi vuoti vengono scartati al salvataggio:
-
-```text
-Messaggio 1
-
-Messaggio 2
-```
-
-viene salvato come:
-
-```json
-"messaggi": ["Messaggio 1", "Messaggio 2"]
-```
-
-La UI non invia messaggi Telegram e non richiede token.
 
 ### Configurazione YAML opzionale
 
@@ -240,7 +211,6 @@ TELEGRAM_ALERT_CHAT_ID
 - Optional YAML configuration separated from calendar data.
 - Secret management through environment variables.
 - Telegram Bot API integration.
-- Streamlit UI to edit JSONL calendars.
 - `--dry-run` mode to validate messages without side effects.
 - Delivery state tracking through `inviato` and `message_id`.
 - Sending is blocked when the message contains review markers.
@@ -268,8 +238,6 @@ Telegram channel or chat
 
 `tabula.py` reads the first calendar entry with `inviato: false`, builds the Telegram message, asks for confirmation, and sends it through the Telegram Bot API. When `--more` is provided, it adds header and footer from the YAML file. After a successful send, it updates the calendar line by setting `inviato: true` and storing the Telegram `message_id`.
 
-`ui.py` is separate from the sending flow: it only selects and edits a JSONL file. `tabula.py` remains the entry point for manual or scheduled sending.
-
 ### Requirements
 
 - Python 3
@@ -286,7 +254,7 @@ pip install .
 tabula --dry-run examples/calendario.jsonl
 ```
 
-Alternatively, for development or to also use the Streamlit UI, install the dependencies and run the scripts directly from the repository:
+Alternatively, for development, install the dependencies and run the scripts directly from the repository:
 
 ```bash
 pip install -r requirements.txt
@@ -327,32 +295,6 @@ Generated with:
 ```bash
 python3 tabula.py --dry-run --more examples/tabula.yaml examples/calendario.jsonl
 ```
-
-### Calendar Editing UI
-
-Start the UI with:
-
-```bash
-streamlit run ui.py
-```
-
-At startup, only the calendar file selector is shown. The UI looks for `.jsonl` files in `data/` and `examples/`. After selecting a file, it shows the period list and text editor.
-
-In the editor, an empty line separates message blocks. Empty blocks are discarded when saving:
-
-```text
-Message 1
-
-Message 2
-```
-
-is saved as:
-
-```json
-"messaggi": ["Message 1", "Message 2"]
-```
-
-The UI does not send Telegram messages and does not require tokens.
 
 ### Optional YAML Configuration
 
