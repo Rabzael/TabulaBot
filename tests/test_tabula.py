@@ -7,20 +7,20 @@ from src.calendar import get_first_line_to_send, load_json_calendar, update_cale
 
 
 def test_get_dates_line_same_month():
-    assert get_dates_line("2026-06-07", "2026-06-13") == "_Dal 7 al 13 Giugno_"
+    assert get_dates_line("2026-06-07", "2026-06-13") == "_Dal 7 al 13 giugno_"
 
 
 def test_assembly_message():
     message = assembly_message(
         header="*Aggiornamenti*",
-        dates_line="_Dal 7 al 13 Giugno_",
+        dates_line="_Dal 7 al 13 giugno_",
         footer="---\nContatti: info@example.org",
         days=["*Lunedi*\n9:30 - Stand-up", "*Venerdi*\n17:30 - Report"],
     )
 
     assert message == (
         "*Aggiornamenti*\n"
-        "_Dal 7 al 13 Giugno_\n\n"
+        "_Dal 7 al 13 giugno_\n\n"
         "*Lunedi*\n"
         "9:30 - Stand-up\n\n"
         "*Venerdi*\n"
@@ -33,13 +33,13 @@ def test_assembly_message():
 def test_assembly_message_without_header_and_footer():
     message = assembly_message(
         header=None,
-        dates_line="_Dal 7 al 13 Giugno_",
+        dates_line="_Dal 7 al 13 giugno_",
         footer=None,
         days=["*Lunedi*\n9:30 - Stand-up"],
     )
 
     assert message == (
-        "_Dal 7 al 13 Giugno_\n\n"
+        "_Dal 7 al 13 giugno_\n\n"
         "*Lunedi*\n"
         "9:30 - Stand-up"
     )
@@ -48,7 +48,7 @@ def test_assembly_message_without_header_and_footer():
 def test_assembly_message_with_fsspx_section():
     message = assembly_message(
         header="*Aggiornamenti*",
-        dates_line="_Dal 7 al 13 Giugno_",
+        dates_line="_Dal 7 al 13 giugno_",
         footer="---\nContatti: info@example.org",
         days=["*Domenica*\n9:00 - S. Giovanni in Foro"],
         fsspx=["18:00 - Cappella di Villa Quaranta, Pescantina (VR)"],
@@ -56,7 +56,7 @@ def test_assembly_message_with_fsspx_section():
 
     assert message == (
         "*Aggiornamenti*\n"
-        "_Dal 7 al 13 Giugno_\n\n"
+        "_Dal 7 al 13 giugno_\n\n"
         "*Domenica*\n"
         "9:00 - S. Giovanni in Foro\n\n"
         "Per completezza segnaliamo:\n"
@@ -69,14 +69,14 @@ def test_assembly_message_with_fsspx_section():
 def test_assembly_message_without_fsspx_is_unchanged():
     message = assembly_message(
         header=None,
-        dates_line="_Dal 7 al 13 Giugno_",
+        dates_line="_Dal 7 al 13 giugno_",
         footer=None,
         days=["*Lunedi*\n9:30 - Stand-up"],
         fsspx=None,
     )
 
     assert message == (
-        "_Dal 7 al 13 Giugno_\n\n"
+        "_Dal 7 al 13 giugno_\n\n"
         "*Lunedi*\n"
         "9:30 - Stand-up"
     )

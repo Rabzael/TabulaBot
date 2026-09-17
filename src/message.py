@@ -1,16 +1,16 @@
 MONTHS = {
-  1 : "Gennaio",
-  2 : "Febbraio",
-  3 : "Marzo",
-  4 : "Aprile",
-  5 : "Maggio",
-  6 : "Giugno",
-  7 : "Luglio",
-  8 : "Agosto",
-  9 : "Settembre",
-  10 : "Ottobre",
-  11 : "Novembre",
-  12 : "Dicembre",
+  1 : "gennaio",
+  2 : "febbraio",
+  3 : "marzo",
+  4 : "aprile",
+  5 : "maggio",
+  6 : "giugno",
+  7 : "luglio",
+  8 : "agosto",
+  9 : "settembre",
+  10 : "ottobre",
+  11 : "novembre",
+  12 : "dicembre",
 }
 
 BLOCKED_MARKERS = ['???']
