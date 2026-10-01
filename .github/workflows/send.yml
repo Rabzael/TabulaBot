@@ -33,17 +33,17 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TELEGRAM_ALERT_CHAT_ID: ${{ secrets.TELEGRAM_ALERT_CHAT_ID }}
-        run: python tabula.py --force --more data/tabula.yaml data/2026.jsonl
+        run: python tabula.py --force --more data/tabula.yaml data/calendar.jsonl
 
       - name: Commit updated calendar
         run: |
-          if git diff --quiet -- data/2026.jsonl; then
+          if git diff --quiet -- data/calendar.jsonl; then
             echo "Calendar unchanged."
             exit 0
           fi
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/2026.jsonl
+          git add data/calendar.jsonl
           git commit -m "Update sent calendar entry"
           git push

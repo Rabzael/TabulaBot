@@ -1,0 +1,30 @@
+name: Update send calendar
+
+on:
+  schedule:
+    - cron: "0 13 28 Dec *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Swap calendars
+        run: |
+          git mv data/calendar.jsonl data/2026.jsonl
+          git mv data/2027.jsonl data/calendar.jsonl
+
+      - name: Commit updated calendars
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/*
+          git commit -m "Set new calendar"
+          git push
